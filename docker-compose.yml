@@ -1,0 +1,18 @@
+
+services:
+  mock-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+    environment:
+      - APP_NAME=Mock API (Docker)
+      - LOG_LEVEL=INFO
+      - HOST=0.0.0.0
+      - PORT=8000
+      - CSV_FILE_PATH=data/resources.csv
+    restart: unless-stopped

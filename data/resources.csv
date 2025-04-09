@@ -1,0 +1,21 @@
+id,title,description,access_count,student_count
+a1b2c3d4-e5f6-7890-1234-567890abcdef,"Advanced Algorithms and Data Structures","In-depth study of advanced algorithmic techniques and data structures.",325,55
+f8e7d6c5-b4a3-2109-8765-43210fedcba,"Software Architecture and Design Patterns","Principles and patterns for designing robust and scalable software systems.",480,72
+90123456-789a-bcde-f012-34567890abcd,"Cloud Computing and Infrastructure","Exploring cloud platforms, services, and infrastructure management.",210,38
+ef012345-6789-abcd-ef01-23456789abcd,"DevOps and Continuous Delivery","Automation of software delivery pipelines and DevOps practices.",395,61
+bcdefa01-2345-6789-abcd-ef0123456789,"Machine Learning for Software Engineers","Applying machine learning concepts to software engineering problems.",150,25
+6789abcd-ef01-2345-6789-abcdef012345,"Big Data Processing and Analytics","Processing and analyzing large datasets using big data technologies.",280,45
+23456789-abcdef-0123-4567-89abcdef0123,"Software Testing and Quality Assurance","Strategies and techniques for ensuring software quality.",410,68
+defa0123-4567-89ab-cdef-0123456789ab,"Mobile Application Development (Android)","Developing native Android applications.",185,30
+89abcdef-0123-4567-89ab-cdef01234567,"Mobile Application Development (iOS)","Developing native iOS applications.",160,28
+cdef0123-4567-89ab-cdef-0123456789ab,"Web Development Frameworks (React)","Building dynamic user interfaces with React.",355,58
+456789ab-cdef-0123-4567-89abcdef0123,"Web Development Frameworks (Angular)","Developing complex web applications with Angular.",290,49
+01234567-89ab-cdef-0123-456789abcdef,"Database Systems and Management","Design, implementation, and management of database systems.",430,70
+abcdef01-2345-6789-abcd-ef0123456789,"Cybersecurity for Software Engineers","Security principles and practices for software development.",220,35
+789abcdef0-1234-5678-9abc-def01234567,"Software Project Management","Planning, executing, and controlling software projects.",370,63
+3456789a-bcde-f012-3456-7890abcdef01,"Agile Methodologies and Practices","Applying agile frameworks like Scrum and Kanban.",455,75
+bcdefa01-2345-6789-abcd-ef0123456789,"Distributed Systems","Designing and implementing systems that span multiple nodes.",265,42
+ef012345-6789-abcd-ef01-23456789abcd,"Human-Computer Interaction","Principles of designing user-friendly and effective interfaces.",315,51
+90123456-789a-bcde-f012-34567890abcd,"Requirements Engineering","Eliciting, documenting, and managing software requirements.",385,66
+f8e7d6c5-b4a3-2109-8765-43210fedcba,"Software Evolution and Maintenance","Understanding and managing the evolution of software systems.",240,40
+a1b2c3d4-e5f6-7890-1234-567890abcdef,"Ethical Considerations in Software Engineering","Social and ethical implications of software development.",195,32
