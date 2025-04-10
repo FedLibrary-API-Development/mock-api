@@ -5,6 +5,36 @@ from fastapi.testclient import TestClient
 
 from app.main import app
 from app.db import ResourceRepository
+from app.core import settings
+
+@pytest.fixture
+def test_api_key():
+    """Fixture for test API key."""
+    return "test-api-key-12345"
+
+
+@pytest.fixture(autouse=True)
+def setup_test_api_keys(test_api_key):
+    """Setup API keys for testing environment."""
+    # Save original API keys
+    original_keys = getattr(settings, 'API_KEYS', []).copy() if hasattr(settings, 'API_KEYS') else []
+    
+    # Set test API key
+    settings.API_KEYS = [test_api_key]
+    
+    yield
+    
+    # Restore original keys
+    settings.API_KEYS = original_keys
+    
+    
+@pytest.fixture
+def test_client_no_auth():
+    """Fixture for FastAPI test client without authentication."""
+    with TestClient(app) as client:
+        # Explicitly don't add any auth headers
+        yield client
+
 
 @pytest.fixture
 def test_csv_path():
@@ -33,9 +63,11 @@ def test_repository(test_csv_path):
 
 
 @pytest.fixture
-def test_client():
+def test_client(test_api_key):
     """Fixture for FastAPI test client."""
     with TestClient(app) as client:
+        # Add API key to default headers
+        client.headers.update({"X-API-Key": test_api_key})
         yield client
         
         
