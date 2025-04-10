@@ -8,8 +8,10 @@ from app.schemas.resource import (
     ResourceResponse,
     ResourceListResponse
 )
+from app.core import get_api_key
 
-router = APIRouter()
+
+router = APIRouter(dependencies=[Depends(get_api_key)])
 
 @router.get("/", response_model=ResourceListResponse, summary="Get all resources")
 async def get_resources(

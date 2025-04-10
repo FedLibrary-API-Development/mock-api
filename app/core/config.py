@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
 from pydantic import BaseModel
+from typing import List
 from dotenv import load_dotenv
 
 # Load environment variables from .env
@@ -27,6 +28,9 @@ class Settings(BaseModel):
     
     # Computed settings
     CSV_FILE_FULL_PATH: str = str(BASE_DIR / CSV_FILE_PATH)
+    
+    # API Authentication settings
+    API_KEYS: List[str] = [key.strip() for key in os.getenv("API_KEYS", "").split(",") if key.strip()]
     
     
 # Global settings object
