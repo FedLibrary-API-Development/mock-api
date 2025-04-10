@@ -41,3 +41,11 @@ The API will be available at http://localhost:8000/api/v1/resources/
 
 - Swagger UI: http://localhost:8000/docs
 - ReDoc: http://localhost:8000/redoc
+
+## Testing
+
+Run the tests with:
+
+```bash
+pytest
+```
