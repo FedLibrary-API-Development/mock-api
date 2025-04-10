@@ -122,8 +122,14 @@ class ResourceRepository:
         
         write_csv_file(self.file_path, df)
         
+        # Get the updated resource
+        updated_df = df[df["id"] == resource_id]
+        if updated_df.empty:
+            logger.warning(f"Resource not found after update: {resource_id}")
+            raise HTTPException(status_code=404, detail=f"Resource with ID {resource_id} not found")
+        
         # Return updated resource
-        updated_resource = df[df["id"] == resource_id].to_dict("records")[0]
+        updated_resource = updated_df.to_dict("records")[0]
         logger.info(f"Updated resource with ID: {resource_id}")
         return updated_resource
     
@@ -144,7 +150,7 @@ class ResourceRepository:
         df = read_csv_file(self.file_path, self.COLUMNS)
         
         # Check if resource exists
-        if not df.empty and not (df["id"] == resource_id).any():
+        if df.empty or not (df["id"] == resource_id).any():
             logger.warning(f"Resource not found: {resource_id}")
             raise HTTPException(status_code=404, detail=f"Resource with ID {resource_id} not found")
         
