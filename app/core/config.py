@@ -20,6 +20,7 @@ class Settings(BaseModel):
     
     # Data settings
     CSV_FILE_PATH: str = os.getenv("CSV_FILE_PATH", "data/resources.csv")
+    JSON_FILE_PATH: str = os.getenv("JSON_FILE_PATH", "data/sample-ereserve-data.json")
     
     # Server settings
     HOST: str = os.getenv("HOST", "0.0.0.0")
@@ -28,10 +29,16 @@ class Settings(BaseModel):
     
     # Computed settings
     CSV_FILE_FULL_PATH: str = str(BASE_DIR / CSV_FILE_PATH)
+    JSON_FILE_FULL_PATH: str = str(BASE_DIR / JSON_FILE_PATH)
     
-    # API Authentication settings
+    # Authentication settings
+    SECRET_KEY: str = os.getenv("SECRET_KEY")
+    ALGORITHM: str = os.getenv("ALGORITHM")
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES"))
     API_KEYS: List[str] = [key.strip() for key in os.getenv("API_KEYS", "").split(",") if key.strip()]
     
+    class Config:
+        case_sensitive = True
     
 # Global settings object
 settings = Settings()

@@ -1,1 +1,1 @@
-from .repository import ResourceRepository
+from .ereserve_repository import EReserveRepository

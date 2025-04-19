@@ -4,22 +4,20 @@ from fastapi import FastAPI, Request
 from contextlib import asynccontextmanager
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.exceptions import RequestValidationError
+from fastapi.openapi.docs import get_swagger_ui_oauth2_redirect_html
 
 from app.core import settings
 from app.core import logger
-from app.api.routes import resources
-from app.utils import check_csv_file_exists
+from app.api.routes import auth
+from app.api.routes import ereserve
 from app.api.errors import validation_exception_handler
-from app.db import ResourceRepository
+from app.core.openapi import custom_openapi
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Add startup logic here
     logger.info(f"Starting {settings.APP_NAME} v{settings.APP_VERSION}")
-    check_csv_file_exists(
-        settings.CSV_FILE_FULL_PATH, 
-        ResourceRepository.COLUMNS
-    )
+
     logger.info(f"CSV file path: {settings.CSV_FILE_FULL_PATH}")
     yield
     
@@ -40,9 +38,7 @@ def create_app() -> FastAPI:
         lifespan=lifespan,
         title=settings.APP_NAME,
         description=settings.APP_DESCRIPTION,
-        version=settings.APP_VERSION,
-        docs_url="/docs",
-        redoc_url="/redoc"
+        version=settings.APP_VERSION
     )
     
     # Add CORS middleware
@@ -58,7 +54,8 @@ def create_app() -> FastAPI:
     app.add_exception_handler(RequestValidationError, validation_exception_handler)
     
     # Register routers
-    app.include_router(resources.router, prefix="/api/v1/resources", tags=["resources"])
+    app.include_router(auth.router, tags=["User"])
+    app.include_router(ereserve.router)
     
     # Add middleware for request logging
     @app.middleware("http")
@@ -76,9 +73,34 @@ def create_app() -> FastAPI:
 
 app = create_app()
 
+# Apply custom OpenAPI
+app.openapi = lambda: custom_openapi(app)
+
+# Handle redirect for OAuth if needed
+@app.get(app.swagger_ui_oauth2_redirect_url, include_in_schema=False)
+async def swagger_ui_redirect():
+    return get_swagger_ui_oauth2_redirect_html()
+
+# Create a root FastAPI app to mount the app at /api/v1
+root_app = FastAPI(
+    title=settings.APP_NAME,
+    docs_url=None,  # Disable docs at root level
+    redoc_url=None,  # Disable redoc at root level
+    openapi_url=None  # Disable OpenAPI schema at root level
+)
+
+# Mount the main app at /api/v1
+root_app.mount("/api/v1", app)
+
+# Redirect root to docs
+@root_app.get("/", include_in_schema=False)
+async def redirect_to_docs():
+    from fastapi.responses import RedirectResponse
+    return RedirectResponse(url="/api/v1/docs")
+
 if __name__ == "__main__":
     uvicorn.run(
-        "app.main:app",
+        "app.main:root_app",
         host=settings.HOST,
         port=settings.PORT,
         reload=True,

@@ -15,4 +15,8 @@ services:
       - HOST=0.0.0.0
       - PORT=8000
       - CSV_FILE_PATH=data/resources.csv
+      - JSON_FILE_PATH=data/sample-ereserve-data.json
+      - SECRET_KEY="add secret key here"
+      - ALGORITHM=HS256
+      - ACCESS_TOKEN_EXPIRE_MINUTES=60
     restart: unless-stopped

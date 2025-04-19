@@ -1,24 +1,41 @@
-from fastapi import Security, HTTPException, Depends, status
-from fastapi.security.api_key import APIKeyHeader
-from starlette.status import HTTP_403_FORBIDDEN
+from fastapi import HTTPException, Depends, status
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from jose import JWTError
 
-from app.core import settings
-from app.core import logger
+from app.core.auth import decode_token
+from app.db import EReserveRepository
 
-# Define the API key header
-API_KEY_NAME = "X-API-Key"
-api_key_header = APIKeyHeader(name=API_KEY_NAME, auto_error=False)
+bearer_scheme = HTTPBearer(auto_error=False, scheme_name="HTTPBearer")
 
-async def get_api_key(api_key_header: str = Security(api_key_header)):
-    """
-    Validate the API key from the request header.
-    """
-    if api_key_header not in settings.API_KEYS:
-        logger.warning(f"Invalid API key attempt: {api_key_header[:5]}..." if api_key_header else "No API key provided")
+async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(bearer_scheme)):
+    """Validate the bearer token"""
+    if not credentials:
         raise HTTPException(
-            status_code=HTTP_403_FORBIDDEN, 
-            detail="Invalid or missing API key"
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Missing authorization header",
+            headers={"WWW-Authenticate": "Bearer"},
         )
     
-    logger.debug(f"API request successfully authenticated with key.")
-    return api_key_header
+    token = credentials.credentials
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+    
+    try:
+        payload = decode_token(token)
+        username: str = payload.get("sub")
+        if username is None:
+            raise credentials_exception
+    except JWTError:
+        raise credentials_exception
+    
+    # Verify user exists
+    repo = EReserveRepository()
+    users = repo.get_all("users")["items"]
+    integration_users = repo.get_all("integrationUsers")["items"]
+    if not any(u.get("email") == username for u in users + integration_users):
+        raise credentials_exception
+    
+    return {"username": username}

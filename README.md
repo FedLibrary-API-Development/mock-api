@@ -35,6 +35,22 @@ Stop the Docker container:
 docker-compose down  # On MacOS: docker compose down
 ```
 
+### Build Docker Image for Deployment
+
+```bash
+docker build -t teambmockapi .
+```
+
+Build without cache:
+```bash
+docker build --no-cache -t teambmockapi .
+```
+
+If using Mac with ARM chips
+```bash
+docker buildx build --platform linux/amd64 -t teambmockapi .
+```
+
 The API will be available at http://localhost:8000/api/v1/resources/
 
 ### API Documentation
