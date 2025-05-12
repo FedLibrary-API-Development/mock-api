@@ -35,7 +35,7 @@ Stop the Docker container:
 docker-compose down  # On MacOS: docker compose down
 ```
 
-### Build Docker Image for Deployment
+### Build Docker Image for Deployment in Cloud Run
 
 ```bash
 docker build -t teambmockapi .
@@ -51,7 +51,15 @@ If using Mac with ARM chips
 docker buildx build --platform linux/amd64 -t teambmockapi .
 ```
 
-The API will be available at http://localhost:8000/api/v1/resources/
+Tag the Docker Image
+```bash
+docker tag teambmockapi australia-southeast2-docker.pkg.dev/team-b-gcp/team-b-mock-api/teambmockapi
+```
+
+Push the Image to Artifact Reggistry
+```bash
+docker push australia-southeast2-docker.pkg.dev/team-b-gcp/team-b-mock-api/teambmockapi
+```
 
 ### API Documentation
 
