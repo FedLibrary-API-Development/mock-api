@@ -31,26 +31,9 @@ def custom_openapi(app):
     original_components = openapi_schema.get("components", {})
     original_schemas = original_components.get("schemas", {})
     
-    # Define which schemas to keep (only main response models)
-    schemas_to_keep = [
-        "SchoolAttributes", "UnitAttributes",
-        "UnitOfferingAttributes", "ReadingAttributes",
-        "ReadingListAttributes", "ReadingListUsageAttributes",
-        "ReadingListItemAttributes", "ReadingListItemUsageAttributes",
-        "ReadingUtilisationAttributes", "IntegrationUserAttributes",
-        "TeachingSessionAttributes", "UserAttributes",
-        "UserCredentials"
-    ]
-    
-    # Filter schemas to keep only the required
-    filtered_schemas = {}
-    for schema_name in schemas_to_keep:
-        if schema_name in original_schemas:
-            filtered_schemas[schema_name] = original_schemas[schema_name]
-    
     # Create new components with preserved schemas
     components = {
-        "schemas": filtered_schemas,
+        "schemas": original_schemas,
         "securitySchemes": {
             "HTTPBearer": {
                 "type": "apiKey",
