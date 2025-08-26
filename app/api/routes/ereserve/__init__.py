@@ -1,0 +1,26 @@
+from fastapi import APIRouter
+from .schools import router as schools_router
+from .units import router as units_router
+from .unit_offerings import router as unit_offerings_router
+from .readings import router as reading_router
+from .reading_lists import router as reading_list_router
+from .reading_list_usages import router as reading_list_usage_router
+from .reading_list_items import router as reading_list_item_router
+from .readiing_list_item_usages import router as reading_list_item_usage_router
+from .reading_utilisations import router as reading_utilisation_router
+from .integration_users import router as integration_user_router
+from .teaching_sessions import router as teaching_session_router
+
+ereserve_router = APIRouter()
+
+ereserve_router.include_router(schools_router)
+ereserve_router.include_router(units_router)
+ereserve_router.include_router(unit_offerings_router)
+ereserve_router.include_router(reading_router)
+ereserve_router.include_router(reading_list_router)
+ereserve_router.include_router(reading_list_usage_router)
+ereserve_router.include_router(reading_list_item_router)
+ereserve_router.include_router(reading_list_item_usage_router)
+ereserve_router.include_router(reading_utilisation_router)
+ereserve_router.include_router(integration_user_router)
+ereserve_router.include_router(teaching_session_router)

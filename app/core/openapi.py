@@ -26,15 +26,31 @@ def custom_openapi(app):
     openapi_schema["servers"] = [
         {"url": "/api/v1", "description": "Mock API v1"}
     ]
-
     
     # Store the original components that we need to preserve
     original_components = openapi_schema.get("components", {})
     original_schemas = original_components.get("schemas", {})
     
+    # Define which schemas to keep (only main response models)
+    schemas_to_keep = [
+        "SchoolAttributes", "UnitAttributes",
+        "UnitOfferingAttributes", "ReadingAttributes",
+        "ReadingListAttributes", "ReadingListUsageAttributes",
+        "ReadingListItemAttributes", "ReadingListItemUsageAttributes",
+        "ReadingUtilisationAttributes", "IntegrationUserAttributes",
+        "TeachingSessionAttributes", "UserAttributes",
+        "UserCredentials"
+    ]
+    
+    # Filter schemas to keep only the required
+    filtered_schemas = {}
+    for schema_name in schemas_to_keep:
+        if schema_name in original_schemas:
+            filtered_schemas[schema_name] = original_schemas[schema_name]
+    
     # Create new components with preserved schemas
     components = {
-        "schemas": original_schemas,
+        "schemas": filtered_schemas,
         "securitySchemes": {
             "HTTPBearer": {
                 "type": "apiKey",
@@ -59,6 +75,33 @@ def custom_openapi(app):
     
     # Apply security globally
     openapi_schema["security"] = [{"HTTPBearer": []}]
+    
+    # Convert all endpoints to use JSON API content types
+    json_api_endpoints = settings.JSON_API_ENDPOINTS
+    
+    if "paths" in openapi_schema:
+        for path, path_data in openapi_schema["paths"].items():
+            # Check if this endpoint should use JSON API format
+            should_use_json_api = any(path.endswith(endpoint) for endpoint in json_api_endpoints)
+            
+            if should_use_json_api:
+                for method, method_data in path_data.items():
+                    if method.lower() in ["post", "put", "patch"]:
+                        # Update request body content type
+                        if "requestBody" in method_data:
+                            content = method_data["requestBody"].get("content", {})
+                            if "application/json" in content:
+                                # Move from application/json to application/vnd.api+json
+                                json_api_content = content.pop("application/json")
+                                content["application/vnd.api+json"] = json_api_content
+                    
+                    # Update response content types for all methods
+                    if "responses" in method_data:
+                        for response_code, response_data in method_data["responses"].items():
+                            if "content" in response_data and "application/json" in response_data["content"]:
+                                # Move from application/json to application/vnd.api+json
+                                json_api_content = response_data["content"].pop("application/json")
+                                response_data["content"]["application/vnd.api+json"] = json_api_content
     
     app.openapi_schema = openapi_schema
     return app.openapi_schema

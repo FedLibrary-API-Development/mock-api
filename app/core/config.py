@@ -37,6 +37,22 @@ class Settings(BaseModel):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES"))
     API_KEYS: List[str] = [key.strip() for key in os.getenv("API_KEYS", "").split(",") if key.strip()]
     
+    # Misc settings
+    JSON_API_ENDPOINTS: List[str] = [
+        "/users/login",
+        "/schools",
+        "/units",
+        "/unit-offerings",
+        "/readings",
+        "/reading-lists",
+        "/reading-list-usages",
+        "/reading-list-items",
+        "/reading-list-item-usages",
+        "/reading-utilisations",
+        "/integration-users",
+        "/teaching-sessions",
+    ]
+    
     class Config:
         case_sensitive = True
     
