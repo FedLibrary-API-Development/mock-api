@@ -52,6 +52,45 @@ class EReserveRepository:
         # Apply pagination
         items = items[skip:skip + limit]
         return {"items": items, "count": total_count}
+    
+    def get_all_paginated(self, collection: str, page_number: int = 1, page_size: int = 100) -> Dict[str, Any]:
+        """
+        Get all items from a collection with page-based pagination (for JSON API)
+        
+        Args:
+            collection: Name of the collection to query
+            page_number: Page number (1-based)
+            page_size: Number of items per page
+            
+        Returns:
+            Dictionary with items, total_count, page_number, page_size, total_pages
+        """
+        if collection not in self._data:
+            raise HTTPException(status_code=404, detail=f"Collection {collection} not found")
+            
+        items = self._data[collection]
+        total_count = len(items)
+        total_pages = (total_count + page_size - 1) // page_size  # Ceiling division
+        
+        # Validate page number
+        if page_number < 1:
+            page_number = 1
+        if page_number > total_pages and total_pages > 0:
+            page_number = total_pages
+        
+        # Calculate skip
+        skip = (page_number - 1) * page_size
+        
+        # Apply pagination
+        paginated_items = items[skip:skip + page_size]
+        
+        return {
+            "items": paginated_items, 
+            "total_count": total_count,
+            "page_number": page_number,
+            "page_size": page_size,
+            "total_pages": total_pages
+        }
 
     def get_by_id(self, collection: str, item_id: int) -> Dict[str, Any]:
         """
@@ -71,7 +110,8 @@ class EReserveRepository:
             raise HTTPException(status_code=404, detail=f"Collection {collection} not found")
             
         for item in self._data[collection]:
-            if item.get("id") == item_id:
+            item_id_value = item.get("id")
+            if str(item_id_value) == str(item_id):
                 return item
         
         logger.warning(f"Item not found in {collection}: {item_id}")
